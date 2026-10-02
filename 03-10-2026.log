@@ -1,0 +1,108 @@
+==========================================================
+To run interactively:
+  python hyperosunlocker.py
+
+To run with token directly:
+  python hyperosunlocker.py --token <new_bbs_serviceToken>
+==========================================================
+Checking initial account status...
+[account]: Ready! Account eligible to apply.
+
+[NTP] Synchronizing high-precision time...
+[ntp server]: time.cloudflare.com
+[bj time]:    2026-10-03 23:49:34.317217 (UTC+8)
+[local time]: 2026-10-03 16:49:34.317217 (WEST)
+
+Bootloader unlock quota target scheduled:
+[phase offset]:  300.00 ms before trigger
+[target Beijing]: 2026-10-03 23:59:59.700000 (UTC+8)
+[target local]:   2026-10-03 16:59:59.700000 (WEST)
+Keep this terminal open. Countdown in progress...
+
+[countdown]: 10m 25s remaining (current BJ time: 23:49:34)
+[countdown]: 09m 55s remaining (current BJ time: 23:50:04)
+[countdown]: 09m 25s remaining (current BJ time: 23:50:34)
+[countdown]: 08m 55s remaining (current BJ time: 23:51:04)
+[countdown]: 08m 25s remaining (current BJ time: 23:51:34)
+[countdown]: 07m 55s remaining (current BJ time: 23:52:04)
+[countdown]: 07m 25s remaining (current BJ time: 23:52:34)
+[countdown]: 06m 55s remaining (current BJ time: 23:53:04)
+[countdown]: 06m 25s remaining (current BJ time: 23:53:34)
+[countdown]: 05m 55s remaining (current BJ time: 23:54:04)
+[countdown]: 05m 25s remaining (current BJ time: 23:54:34)
+[countdown]: 04m 55s remaining (current BJ time: 23:55:04)
+[countdown]: 04m 25s remaining (current BJ time: 23:55:34)
+[countdown]: 03m 55s remaining (current BJ time: 23:56:04)
+[countdown]: 03m 25s remaining (current BJ time: 23:56:34)
+[countdown]: 02m 55s remaining (current BJ time: 23:57:04)
+[countdown]: 02m 25s remaining (current BJ time: 23:57:34)
+[countdown]: 01m 55s remaining (current BJ time: 23:58:04)
+[countdown]: 01m 25s remaining (current BJ time: 23:58:34)
+[countdown]: 59.3s remaining...
+[countdown]: 54.8s remaining...
+[countdown]: 49.8s remaining...
+[countdown]: 44.8s remaining...
+[countdown]: 39.8s remaining...
+[countdown]: 34.8s remaining...
+[warmup]: Measuring network latency to Xiaomi API...
+[warmup]: Roundtrip latency: 2098.3ms (one-way flight ~1049.1ms)
+[countdown]: 29.8s remaining...
+[countdown]: 24.5s remaining...
+[countdown]: 19.5s remaining...
+[countdown]: 14.5s remaining...
+[countdown]: 9.54s...
+[countdown]: 8.99s...
+[countdown]: 7.99s...
+[countdown]: 6.99s...
+[warmup]: Priming connection pool sockets (T - 5s)...
+[countdown]: 5.99s...
+[countdown]: 4.97s...
+[countdown]: 3.97s...
+[countdown]: 2.96s...
+[warmup]: Final socket keep-alive ping (T - 2s)...
+
+[TRIGGER HIT]: 2026-10-03 23:59:59.700243 (Beijing) -> Dispatching burst!
+Firing 20 concurrent burst requests (stagger: 25.0ms, workers: 15)...
+
+[request #01]: sent at 23:59:59.700 (UTC+8)
+[request #02]: sent at 23:59:59.725 (UTC+8)
+[request #03]: sent at 23:59:59.751 (UTC+8)
+[request #04]: sent at 23:59:59.776 (UTC+8)
+[request #05]: sent at 23:59:59.801 (UTC+8)
+[request #06]: sent at 23:59:59.826 (UTC+8)
+[request #07]: sent at 23:59:59.851 (UTC+8)
+[request #08]: sent at 23:59:59.876 (UTC+8)
+[request #09]: sent at 23:59:59.902 (UTC+8)
+[request #10]: sent at 23:59:59.927 (UTC+8)
+[request #11]: sent at 23:59:59.952 (UTC+8)
+[request #12]: sent at 23:59:59.977 (UTC+8)
+[request #13]: sent at 00:00:00.003 (UTC+8)
+[request #14]: sent at 00:00:00.028 (UTC+8)
+[request #15]: sent at 00:00:00.053 (UTC+8)
+[response #03]: Quota reached (recvd: 00:00:03.187). Try at 10/05 00:00
+[request #16]: sent at 00:00:03.187 (UTC+8)
+[response #01]: Quota reached (recvd: 00:00:03.187). Try at 10/05 00:00
+[request #17]: sent at 00:00:03.187 (UTC+8)
+[response #11]: Quota reached (recvd: 00:00:03.231). Try at 10/05 00:00
+[request #18]: sent at 00:00:03.231 (UTC+8)
+[response #09]: Quota reached (recvd: 00:00:03.234). Try at 10/05 00:00
+[request #19]: sent at 00:00:03.235 (UTC+8)
+[response #06]: Quota reached (recvd: 00:00:03.315). Try at 10/05 00:00
+[request #20]: sent at 00:00:03.315 (UTC+8)
+[response #04]: Quota reached (recvd: 00:00:03.377). Try at 10/05 00:00
+[response #15]: Quota reached (recvd: 00:00:03.390). Try at 10/05 00:00
+[response #13]: Quota reached (recvd: 00:00:03.416). Try at 10/05 00:00
+[response #02]: Quota reached (recvd: 00:00:03.488). Try at 10/05 00:00
+[response #12]: Quota reached (recvd: 00:00:03.520). Try at 10/05 00:00
+[response #07]: Quota reached (recvd: 00:00:03.533). Try at 10/05 00:00
+[response #14]: Quota reached (recvd: 00:00:03.741). Try at 10/05 00:00
+[response #19]: Quota reached (recvd: 00:00:04.108). Try at 10/05 00:00
+[response #18]: Quota reached (recvd: 00:00:04.108). Try at 10/05 00:00
+[response #17]: Quota reached (recvd: 00:00:14.553). Try at 10/05 00:00
+[response #10]: Quota reached (recvd: 00:00:14.554). Try at 10/05 00:00
+[response #20]: Quota reached (recvd: 00:00:14.553). Try at 10/05 00:00
+[response #16]: Quota reached (recvd: 00:00:14.553). Try at 10/05 00:00
+[response #05]: Quota reached (recvd: 00:00:14.553). Try at 10/05 00:00
+[response #08]: Quota reached (recvd: 00:00:14.613). Try at 10/05 00:00
+
+Burst completed.

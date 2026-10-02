@@ -1,0 +1,101 @@
+==========================================================
+ Xiaomi Bootloader Unlocker (HyperOS) - Ephemeral Nix Env
+==========================================================
+To run interactively:
+  python hyperosunlocker.py
+
+To run with token directly:
+  python hyperosunlocker.py --token <new_bbs_serviceToken>
+==========================================================
+Checking initial account status...
+[account]: Ready! Account eligible to apply.
+
+[NTP] Synchronizing high-precision time...
+[ntp server]: time.cloudflare.com
+[bj time]:    2026-10-04 23:56:55.913030 (UTC+8)
+[local time]: 2026-10-04 16:56:55.913030 (WEST)
+
+Bootloader unlock quota target scheduled:
+[phase offset]:  300.00 ms before trigger
+[target Beijing]: 2026-10-04 23:59:59.700000 (UTC+8)
+[target local]:   2026-10-04 16:59:59.700000 (WEST)
+Keep this terminal open. Countdown in progress...
+
+[countdown]: 03m 03s remaining (current BJ time: 23:56:55)
+[countdown]: 02m 33s remaining (current BJ time: 23:57:25)
+[countdown]: 02m 03s remaining (current BJ time: 23:57:55)
+[countdown]: 01m 33s remaining (current BJ time: 23:58:25)
+[countdown]: 01m 03s remaining (current BJ time: 23:58:55)
+[countdown]: 58.8s remaining...
+[countdown]: 53.8s remaining...
+[countdown]: 48.8s remaining...
+[countdown]: 43.8s remaining...
+[countdown]: 38.8s remaining...
+[countdown]: 33.8s remaining...
+[warmup]: Measuring network latency to Xiaomi API...
+[warmup]: Roundtrip latency: 803.7ms (one-way flight ~401.9ms)
+[warmup]: Adapted phase offset: 300ms → 551.9ms (one-way 401.9ms + 150ms buffer)
+[warmup]: New target: 2026-10-04 23:59:59.448138 (UTC+8) / 16:59:59.448138 (WEST)
+[countdown]: 27.3s remaining...
+[countdown]: 22.8s remaining...
+[countdown]: 17.8s remaining...
+[countdown]: 12.8s remaining...
+[countdown]: 9.81s...
+[countdown]: 8.96s...
+[countdown]: 7.96s...
+[countdown]: 6.96s...
+[warmup]: Priming connection pool sockets (T - 5s)...
+[countdown]: 5.96s...
+[countdown]: 2.43s...
+[warmup]: Final socket keep-alive ping (T - 2s)...
+
+[TRIGGER HIT]: 2026-10-04 23:59:59.448387 (Beijing) -> Dispatching burst!
+Firing 20 concurrent burst requests (stagger: 25.0ms, workers: 15)...
+
+[request #01]: sent at 23:59:59.448 (UTC+8)
+[request #02]: sent at 23:59:59.474 (UTC+8)
+[request #03]: sent at 23:59:59.499 (UTC+8)
+[request #04]: sent at 23:59:59.524 (UTC+8)
+[request #05]: sent at 23:59:59.549 (UTC+8)
+[request #06]: sent at 23:59:59.575 (UTC+8)
+[request #07]: sent at 23:59:59.600 (UTC+8)
+[request #08]: sent at 23:59:59.625 (UTC+8)
+[request #09]: sent at 23:59:59.651 (UTC+8)
+[request #10]: sent at 23:59:59.676 (UTC+8)
+[request #11]: sent at 23:59:59.701 (UTC+8)
+[request #12]: sent at 23:59:59.726 (UTC+8)
+[request #13]: sent at 23:59:59.752 (UTC+8)
+[request #14]: sent at 23:59:59.777 (UTC+8)
+[request #15]: sent at 23:59:59.802 (UTC+8)
+[response #05]: Quota reached (recvd: 00:00:03.011). Try at 10/06 00:00
+[request #16]: sent at 00:00:03.012 (UTC+8)
+[response #15]: Quota reached (recvd: 00:00:03.171). Try at 10/06 00:00
+[request #17]: sent at 00:00:03.171 (UTC+8)
+[response #01]: Quota reached (recvd: 00:00:03.250). Try at 10/06 00:00
+[request #18]: sent at 00:00:03.250 (UTC+8)
+[response #08]: Quota reached (recvd: 00:00:03.262). Try at 10/06 00:00
+[request #19]: sent at 00:00:03.263 (UTC+8)
+[response #12]: Quota reached (recvd: 00:00:03.273). Try at 10/06 00:00
+[request #20]: sent at 00:00:03.274 (UTC+8)
+[response #03]: Quota reached (recvd: 00:00:03.297). Try at 10/06 00:00
+[response #06]: Quota reached (recvd: 00:00:03.412). Try at 10/06 00:00
+[response #13]: Quota reached (recvd: 00:00:03.470). Try at 10/06 00:00
+[response #02]: Quota reached (recvd: 00:00:03.472). Try at 10/06 00:00
+[response #04]: Quota reached (recvd: 00:00:03.594). Try at 10/06 00:00
+[response #14]: Quota reached (recvd: 00:00:03.618). Try at 10/06 00:00
+[response #11]: Quota reached (recvd: 00:00:03.670). Try at 10/06 00:00
+[response #09]: Quota reached (recvd: 00:00:03.740). Try at 10/06 00:00
+[response #07]: Quota reached (recvd: 00:00:03.852). Try at 10/06 00:00
+[response #16]: Quota reached (recvd: 00:00:03.889). Try at 10/06 00:00
+[response #17]: Quota reached (recvd: 00:00:03.961). Try at 10/06 00:00
+[response #18]: Quota reached (recvd: 00:00:04.040). Try at 10/06 00:00
+[response #20]: Quota reached (recvd: 00:00:04.056). Try at 10/06 00:00
+[response #19]: Quota reached (recvd: 00:00:04.159). Try at 10/06 00:00
+[response #10]: Quota reached (recvd: 00:00:07.414). Try at 10/06 00:00
+
+Burst completed.
+Exception ignored in atexit callback <function _write_log_file at 0x791aa4bb5d20>:
+Traceback (most recent call last):
+  File "/home/bmeira/code/external/xiaomi-bootloader-unlocker/hyperosunlocker.py", line 68, in _write_log_file
+    log_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), f"{date_str}.log")
+NameError: name '__file__' is not defined

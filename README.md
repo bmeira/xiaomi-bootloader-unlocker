@@ -1,49 +1,75 @@
 # xiaomi-bootloader-unlocker
-released via cursor
-simple script to send timed unlock apply requests around beijing midnight reset.
 
-## credit
+Simple script to send timed unlock apply requests around Beijing midnight quota reset (00:00:00 Asia/Shanghai, UTC+8).
 
-some request/session handling ideas were inspired by community tooling:
+## Credits
 
+Request/session handling ideas inspired by community tooling:
 - [offici5l/MiUnlockTool](https://github.com/offici5l/MiUnlockTool/tree/main/MiUnlockTool/src/miunlock)
 
+---
 
-## install
+## Prerequisites & Getting Token
 
-to get token after running script, install cookie editor and copy "new_bbs_serviceToken"
-and paste into your terminal (while the script is running)
+1. **Xiaomi Community App (Global)**:
+   - Account must be logged in and older than 30 days.
+   - Region in Xiaomi Community app must be set to **Global** (`Me -> Set up -> Change region -> Global`).
+   - Go to `Me -> Unlock bootloader -> Apply for unlock`.
+2. **Extract `new_bbs_serviceToken`**:
+   - Log into [Xiaomi Account / Community](https://account.xiaomi.com) in your browser.
+   - Open Developer Tools (F12) -> Application / Storage -> Cookies.
+   - Find and copy the value of `new_bbs_serviceToken` (or copy the entire cookie string).
+
+---
+
+## Running with Nix (Recommended / Ephemeral)
+
+No persistent dependencies or `pip install` required!
+
+### Option 1: Using the provided `shell.nix`
+
+From the repository directory:
 
 ```bash
-pip install -r requirements.txt
+# Interactive token prompt
+nix-shell --run "python hyperosunlocker.py"
+
+# Or provide token directly
+nix-shell --run "python hyperosunlocker.py --token 'your_new_bbs_serviceToken'"
 ```
 
-## run
-
-interactive token:
+### Option 2: One-liner from anywhere (pure ephemeral nix-shell)
 
 ```bash
-python hyperosunlocker.py
+nix-shell -p "python3.withPackages (ps: with ps; [ ntplib pytz urllib3 colorama ])" \
+  --run "python hyperosunlocker.py --token 'your_new_bbs_serviceToken'"
 ```
 
-non-interactive token:
+---
 
-```bash
-python hyperosunlocker.py --token "your_new_bbs_serviceToken_here"
-```
+## When to Run (Timezones & Portugal)
 
-## useful flags
+Xiaomi's server quota resets every day at **00:00:00 Beijing Time (UTC+8)**.
 
-- `--phase-ms 200` -> start 200 ms before 00:00:00 bj
-- `--burst-count 30`
-- `--burst-gap-ms 30`
-- `--normal-gap-ms 100`
-- `--status-url ...`
-- `--apply-url ...`
-- `--version-code ...`
-- `--version-name ...`
+- **Portugal (Summer / WEST, UTC+1 - late March to late October)**:
+  - Reset is at **17:00:00 (5:00 PM)** local time.
+- **Portugal (Winter / WET, UTC+0 - late October to late March)**:
+  - Reset is at **16:00:00 (4:00 PM)** local time.
 
-## env vars
+**Recommendation**: Start the script **10 to 15 minutes before reset** (e.g. at 16:45 in summer or 15:45 in winter). The script synchronizes with NTP, displays local and Beijing target countdowns, and automatically fires burst requests 200 ms before the exact reset time.
+
+---
+
+## Useful Flags
+
+- `--phase-ms 200` : Start 200 ms before 00:00:00 BJ (default: `200`)
+- `--burst-count 30` : Number of rapid requests immediately at trigger (default: `30`)
+- `--burst-gap-ms 30` : Milliseconds between burst requests (default: `30`)
+- `--normal-gap-ms 100` : Milliseconds between requests after burst (default: `100`)
+- `--skip-check` : Skip initial account unlock state check
+- `-y`, `--yes` : Auto-confirm prompts
+
+## Environment Variables
 
 - `HYPEROS_TOKEN`
 - `HYPEROS_PHASE_MS`
