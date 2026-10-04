@@ -56,16 +56,18 @@ Xiaomi's server quota resets every day at **00:00:00 Beijing Time (UTC+8)**.
 - **Portugal (Winter / WET, UTC+0 - late October to late March)**:
   - Reset is at **16:00:00 (4:00 PM)** local time.
 
-**Recommendation**: Start the script **10 to 15 minutes before reset** (e.g. at 16:45 in summer or 15:45 in winter). The script synchronizes with NTP, displays local and Beijing target countdowns, and automatically fires burst requests 200 ms before the exact reset time.
+**Recommendation**: Start the script **10 to 15 minutes before reset** (e.g. at 16:45 in summer or 15:45 in winter). It synchronizes its clock with NTP, measures the Xiaomi API round-trip latency shortly before midnight, then schedules requests so their *estimated server arrivals* span a two-second window centered on midnight. The estimate assumes symmetric network latency, so the actual arrival times can vary.
+
+The default is 30 requests, dispatched at even intervals across that window. The script starts enough workers to avoid requests sitting in a local thread queue behind slower responses, and disables automatic POST retries so the configured burst count is also the maximum number of apply attempts. This improves the odds of requests reaching the service as the quota resets; it cannot guarantee a slot or observe the exact time the server receives each request.
 
 ---
 
 ## Useful Flags
 
-- `--phase-ms 200` : Start 200 ms before 00:00:00 BJ (default: `200`)
-- `--burst-count 30` : Number of rapid requests immediately at trigger (default: `30`)
-- `--burst-gap-ms 30` : Milliseconds between burst requests (default: `30`)
-- `--normal-gap-ms 100` : Milliseconds between requests after burst (default: `100`)
+- `--phase-ms 2000` : Initial countdown target before latency is measured; the target is then adjusted automatically (default: `2000`)
+- `--burst-count 30` : Number of apply attempts spread across the arrival window (default: `30`, maximum: `30`)
+- `--burst-gap-ms 100` : Fallback spacing if the latency measurement is unavailable (normally auto-calculated)
+- `--workers 30` : Minimum worker count; raised automatically to the burst count if needed (maximum: `30`)
 - `--skip-check` : Skip initial account unlock state check
 - `-y`, `--yes` : Auto-confirm prompts
 
@@ -75,7 +77,7 @@ Xiaomi's server quota resets every day at **00:00:00 Beijing Time (UTC+8)**.
 - `HYPEROS_PHASE_MS`
 - `HYPEROS_BURST_COUNT`
 - `HYPEROS_BURST_GAP_MS`
-- `HYPEROS_NORMAL_GAP_MS`
+- `HYPEROS_WORKERS`
 - `HYPEROS_STATUS_URL`
 - `HYPEROS_APPLY_URL`
 - `HYPEROS_USER_AGENT`

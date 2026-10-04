@@ -99,6 +99,9 @@ DEFAULT_NTP_SERVERS = [
     "ntp.aliyun.com",
 ]
 
+ARRIVAL_WINDOW_MS = 2000.0
+MAX_BURST_COUNT = 30
+
 
 def env_or(name, default):
     return os.getenv(name, default)
@@ -120,25 +123,25 @@ def parse_args():
         "--phase-ms",
         type=float,
         default=float(env_or("HYPEROS_PHASE_MS", "2000")),
-        help="ms before bj midnight to fire the FIRST request (default: 2000ms); RTT-adapted at T-30s)",
+        help="initial ms before Beijing midnight for the countdown target (adjusted from RTT at T-60s)",
     )
     parser.add_argument(
         "--burst-count",
         type=int,
-        default=int(env_or("HYPEROS_BURST_COUNT", "25")),
-        help="number of requests to spread across the pre-midnight window (default: 20; at 100ms gap covers ~2s window)",
+        default=int(env_or("HYPEROS_BURST_COUNT", "30")),
+        help="number of requests to spread across the midnight window (maximum: 30)",
     )
     parser.add_argument(
         "--burst-gap-ms",
         type=float,
         default=float(env_or("HYPEROS_BURST_GAP_MS", "100")),
-        help="stagger interval between requests in ms (default: 100ms; spreads requests across a 2s pre-midnight window)",
+        help="fallback stagger interval in ms when latency cannot be measured",
     )
     parser.add_argument(
         "--workers",
         type=int,
-        default=int(env_or("HYPEROS_WORKERS", "15")),
-        help="number of concurrent worker threads (default: 15)",
+        default=int(env_or("HYPEROS_WORKERS", "30")),
+        help="minimum concurrent worker threads (automatically raised to burst count)",
     )
     parser.add_argument(
         "--status-url",
@@ -179,7 +182,12 @@ def parse_args():
         default=os.getenv("HYPEROS_TEST_RUN", "").lower() in ("1", "true", "yes"),
         help="dry-run test: schedule target 5 seconds from now and fire 3 test requests to verify full pipeline",
     )
-    return parser.parse_args()
+    args = parser.parse_args()
+    if not 1 <= args.burst_count <= MAX_BURST_COUNT:
+        parser.error(f"--burst-count must be between 1 and {MAX_BURST_COUNT}")
+    if not 1 <= args.workers <= MAX_BURST_COUNT:
+        parser.error(f"--workers must be between 1 and {MAX_BURST_COUNT}")
+    return args
 
 
 def generate_device_id():
@@ -230,14 +238,20 @@ def get_initial_beijing_time(ntp_servers):
     print(col_y + "\n[NTP] Synchronizing high-precision time..." + Fore.RESET)
     for server in ntp_servers:
         try:
+            request_tick = time.perf_counter()
+            request_wall = datetime.now(timezone.utc)
             response = client.request(server, version=3, timeout=3)
-            ntp_time = datetime.fromtimestamp(response.tx_time, timezone.utc)
+            response_tick = time.perf_counter()
+            response_wall = datetime.now(timezone.utc)
+            midpoint_tick = (request_tick + response_tick) / 2
+            midpoint_wall = request_wall + (response_wall - request_wall) / 2
+            ntp_time = midpoint_wall + timedelta(seconds=response.offset)
             beijing_time = ntp_time.astimezone(beijing_tz)
             local_time = beijing_time.astimezone()
             print(col_g + "[ntp server]: " + Fore.RESET + server)
             print(col_g + "[bj time]:    " + Fore.RESET + f"{beijing_time.strftime('%Y-%m-%d %H:%M:%S.%f')} (UTC+8)")
             print(col_g + "[local time]: " + Fore.RESET + f"{local_time.strftime('%Y-%m-%d %H:%M:%S.%f')} ({local_time.tzname() or 'local'})")
-            return beijing_time
+            return beijing_time, midpoint_tick
         except Exception as exc:
             print(f"[ntp fail] {server}: {exc}")
     return None
@@ -272,12 +286,19 @@ class FastHttpSession:
             timeout=urllib3.Timeout(connect=2.5, read=10.0),
         )
 
-    def request(self, method, url, headers=None, body=None):
+    def request(self, method, url, headers=None, body=None, retries=None, timeout=None):
         request_headers = dict(self.base_headers)
         if headers:
             request_headers.update(headers)
         if method == "POST" and body is None:
             body = b'{"is_retry":true}'
+        if method == "POST" and retries is None:
+            retries = False
+        request_options = {}
+        if retries is not None:
+            request_options["retries"] = retries
+        if timeout is not None:
+            request_options["timeout"] = timeout
         try:
             return self.http.request(
                 method,
@@ -285,6 +306,7 @@ class FastHttpSession:
                 headers=request_headers,
                 body=body,
                 preload_content=True,
+                **request_options,
             )
         except Exception:
             return None
@@ -344,14 +366,15 @@ def warm_up_connections(session, test_url, cookie_header, num_pings=3):
     rtts = []
     for _ in range(num_pings):
         t0 = time.perf_counter()
-        session.request("GET", test_url, headers={"Cookie": cookie_header})
-        rtt_ms = (time.perf_counter() - t0) * 1000.0
-        rtts.append(rtt_ms)
+        response = session.request("GET", test_url, headers={"Cookie": cookie_header}, retries=False)
+        if response is not None:
+            rtt_ms = (time.perf_counter() - t0) * 1000.0
+            rtts.append(rtt_ms)
         time.sleep(0.05)
-    return min(rtts)
+    return min(rtts) if rtts else None
 
 
-def wait_until_target_time(session, status_url, cookie_header, start_beijing_time, start_tick, phase_ms, burst_count=25, test_run=False):
+def wait_until_target_time(session, status_url, cookie_header, start_beijing_time, start_tick, phase_ms, burst_count=30, test_run=False):
     measured_one_way_ms = None  # will be set when RTT is measured
     adapted_burst_gap_ms = None  # will be set when RTT is measured
     if test_run:
@@ -363,75 +386,76 @@ def wait_until_target_time(session, status_url, cookie_header, start_beijing_tim
     target_local = target_time.astimezone()
 
     print(col_y + "\nBootloader unlock quota target scheduled:" + Fore.RESET)
-    print(col_g + "[phase offset]:  " + Fore.RESET + f"{phase_ms:.2f} ms before trigger")
-    print(col_g + "[target Beijing]:" + Fore.RESET + f" {target_time.strftime('%Y-%m-%d %H:%M:%S.%f')} (UTC+8)")
-    print(col_g + "[target local]:  " + Fore.RESET + f" {target_local.strftime('%Y-%m-%d %H:%M:%S.%f')} ({target_local.tzname() or 'local'})")
+    print(col_g + "[initial phase offset]: " + Fore.RESET + f"{phase_ms:.2f} ms before reset (replaced after latency measurement)")
+    print(col_g + "[initial target Beijing]:" + Fore.RESET + f" {target_time.strftime('%Y-%m-%d %H:%M:%S.%f')} (UTC+8)")
+    print(col_g + "[initial target local]:  " + Fore.RESET + f" {target_local.strftime('%Y-%m-%d %H:%M:%S.%f')} ({target_local.tzname() or 'local'})")
     print("Keep this terminal open. Countdown in progress...\n")
 
     last_log_sec = None
-    warmed_up_30s = False
+    warmed_up_60s = False
     warmed_up_5s = False
-    warmed_up_2s = False
 
     while True:
         now = synced_beijing_time(start_beijing_time, start_tick)
         remaining = (target_time - now).total_seconds()
         if remaining <= 0:
             print(col_c + f"\n[TRIGGER HIT]: {now.strftime('%Y-%m-%d %H:%M:%S.%f')} (Beijing) -> Dispatching burst!" + Fore.RESET)
-            return measured_one_way_ms, adapted_burst_gap_ms
+            trigger_tick = start_tick + (target_time - start_beijing_time).total_seconds()
+            return measured_one_way_ms, adapted_burst_gap_ms, trigger_tick
 
         current_sec = int(remaining)
 
         if not test_run:
-            if remaining <= 30.0 and not warmed_up_30s:
-                warmed_up_30s = True
+            if remaining <= 60.0 and not warmed_up_60s:
+                warmed_up_60s = True
                 print(col_m + "[warmup]: Measuring network latency to Xiaomi API..." + Fore.RESET)
-                measured_rtt = warm_up_connections(session, status_url, cookie_header, num_pings=5)
-                one_way_ms = measured_rtt / 2.0
-                safety_buffer_ms = 2000.0  # aim to arrive 2s before midnight; burst spreads to midnight
-                adapted_phase_ms = one_way_ms + safety_buffer_ms
-                print(col_m + f"[warmup]: Roundtrip latency: {measured_rtt:.1f}ms (one-way flight ~{one_way_ms:.1f}ms)" + Fore.RESET)
+                measured_rtt = warm_up_connections(session, status_url, cookie_header, num_pings=3)
+                if measured_rtt is None:
+                    one_way_ms = 0.0
+                    print(col_y + "[warmup]: No successful latency samples; centering dispatches on midnight without RTT compensation." + Fore.RESET)
+                else:
+                    one_way_ms = measured_rtt / 2.0
+                    print(col_m + f"[warmup]: Roundtrip latency: {measured_rtt:.1f}ms (one-way flight ~{one_way_ms:.1f}ms)" + Fore.RESET)
 
-                # Re-anchor target_time based on live measurement so requests
-                # arrive at the server at midnight, not depart from here at midnight.
                 midnight = (start_beijing_time + timedelta(days=1)).replace(
                     hour=0, minute=0, second=0, microsecond=0
                 )
                 old_phase_ms = (midnight - target_time).total_seconds() * 1000
-                target_time = midnight - timedelta(milliseconds=adapted_phase_ms)
+                window_half_ms = ARRIVAL_WINDOW_MS / 2 if burst_count > 1 else 0
+                target_time = midnight - timedelta(milliseconds=one_way_ms + window_half_ms)
                 target_local = target_time.astimezone()
-                measured_one_way_ms = one_way_ms  # expose to caller
-                # Distribute burst_count requests evenly across the window:
-                # first arrives safety_buffer_ms before midnight, last AT midnight.
-                adapted_burst_gap_ms = safety_buffer_ms / max(1, burst_count - 1)
+                measured_one_way_ms = one_way_ms if measured_rtt is not None else None
+                adapted_burst_gap_ms = ARRIVAL_WINDOW_MS / (burst_count - 1) if burst_count > 1 else 0
                 print(
                     col_m
-                    + f"[warmup]: Adapted phase offset: {old_phase_ms:.0f}ms → {adapted_phase_ms:.1f}ms "
-                    + f"(one-way {one_way_ms:.1f}ms + {safety_buffer_ms:.0f}ms pre-midnight window)"
+                    + f"[warmup]: First request scheduled {old_phase_ms:.0f}ms → "
+                    + f"{(one_way_ms + window_half_ms):.1f}ms before midnight "
+                    + f"(one-way {one_way_ms:.1f}ms + centered {ARRIVAL_WINDOW_MS:.0f}ms arrival window)"
                     + Fore.RESET
                 )
                 print(
                     col_m
                     + f"[warmup]: Burst gap adapted: {adapted_burst_gap_ms:.1f}ms "
-                    + f"({burst_count} requests from 2s before midnight → 00:00:00.000 server arrival)"
+                    + f"({burst_count} estimated arrivals centered on midnight)"
                     + Fore.RESET
                 )
                 print(
                     col_m
-                    + f"[warmup]: New target: {target_time.strftime("%Y-%m-%d %H:%M:%S.%f")} (UTC+8)"
-                    + f" / {target_local.strftime("%H:%M:%S.%f")} ({target_local.tzname() or "local"})"
+                    + f"[warmup]: New target: {target_time.strftime('%Y-%m-%d %H:%M:%S.%f')} (UTC+8)"
+                    + f" / {target_local.strftime('%H:%M:%S.%f')} ({target_local.tzname() or 'local'})"
                     + Fore.RESET
                 )
 
             if remaining <= 6.0 and not warmed_up_5s:
                 warmed_up_5s = True
                 print(col_m + "[warmup]: Priming connection pool sockets (T - 5s)..." + Fore.RESET)
-                session.request("GET", status_url, headers={"Cookie": cookie_header})
-
-            if remaining <= 2.0 and not warmed_up_2s:
-                warmed_up_2s = True
-                print(col_m + "[warmup]: Final socket keep-alive ping (T - 2s)..." + Fore.RESET)
-                session.request("GET", status_url, headers={"Cookie": cookie_header})
+                session.request(
+                    "GET",
+                    status_url,
+                    headers={"Cookie": cookie_header},
+                    retries=False,
+                    timeout=urllib3.Timeout(connect=0.5, read=1.0),
+                )
 
         if remaining > 60:
             if last_log_sec is None or (last_log_sec - current_sec) >= 30:
@@ -455,15 +479,23 @@ def wait_until_target_time(session, status_url, cookie_header, start_beijing_tim
             time.sleep(0.0005)
 
 
-def run_concurrent_burst(session, apply_url, status_url, cookie_header, start_beijing_time, start_tick, burst_count, burst_gap_ms, workers, one_way_ms=None):
+def run_concurrent_burst(session, apply_url, status_url, cookie_header, start_beijing_time, start_tick, dispatch_tick, burst_count, burst_gap_ms, workers, one_way_ms=None):
     stagger_sec = max(0.001, burst_gap_ms / 1000.0)
-    print(col_y + f"Firing {burst_count} concurrent burst requests (stagger: {burst_gap_ms}ms, workers: {workers})...\n" + Fore.RESET)
+    print(col_y + f"Firing {burst_count} scheduled requests (stagger: {burst_gap_ms:.1f}ms, workers: {workers})...\n" + Fore.RESET)
 
     approved_event = Event()
     print_lock = Lock()
     results = []
 
     def send_one(req_id):
+        if approved_event.is_set():
+            return
+        scheduled_tick = dispatch_tick + (req_id - 1) * stagger_sec
+        while not approved_event.is_set():
+            until_send = scheduled_tick - time.perf_counter()
+            if until_send <= 0:
+                break
+            time.sleep(until_send)
         if approved_event.is_set():
             return
         try:
@@ -512,7 +544,6 @@ def run_concurrent_burst(session, apply_url, status_url, cookie_header, start_be
         if approved_event.is_set():
             break
         futures.append(executor.submit(send_one, i))
-        time.sleep(stagger_sec)
 
     wait(futures)
     executor.shutdown(wait=True)
@@ -530,7 +561,9 @@ def main():
     token = resolve_token(args.token)
     device_id = generate_device_id()
     cookie_header = build_cookie_header(token, device_id, args.version_code, args.version_name)
-    session = FastHttpSession(args.user_agent, pool_size=args.workers + 5)
+    burst_count = 3 if args.test_run else args.burst_count
+    workers = max(args.workers, burst_count)
+    session = FastHttpSession(args.user_agent, pool_size=workers + 5)
 
     if not args.skip_check:
         print(col_y + "Checking initial account status..." + Fore.RESET)
@@ -539,13 +572,11 @@ def main():
     else:
         print(col_y + "Skipping initial account status check..." + Fore.RESET)
 
-    start_beijing_time = get_initial_beijing_time(ntp_servers)
-    if start_beijing_time is None:
+    time_sync = get_initial_beijing_time(ntp_servers)
+    if time_sync is None:
         raise SystemExit(col_r + "[error] failed to fetch time via NTP." + Fore.RESET)
-    start_tick = time.perf_counter()
-
-    burst_count = 3 if args.test_run else args.burst_count
-    measured_one_way_ms, adapted_burst_gap_ms = wait_until_target_time(
+    start_beijing_time, start_tick = time_sync
+    measured_one_way_ms, adapted_burst_gap_ms, dispatch_tick = wait_until_target_time(
         session, args.status_url, cookie_header, start_beijing_time, start_tick,
         args.phase_ms, burst_count=burst_count, test_run=args.test_run
     )
@@ -557,9 +588,10 @@ def main():
         cookie_header=cookie_header,
         start_beijing_time=start_beijing_time,
         start_tick=start_tick,
+        dispatch_tick=dispatch_tick,
         burst_count=burst_count,
         burst_gap_ms=adapted_burst_gap_ms if adapted_burst_gap_ms is not None else args.burst_gap_ms,
-        workers=args.workers,
+        workers=workers,
         one_way_ms=measured_one_way_ms,
     )
 
