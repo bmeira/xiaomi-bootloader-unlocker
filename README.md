@@ -32,11 +32,13 @@ From the repository directory:
 
 ```bash
 # Interactive token prompt
-nix-shell --run "python hyperosunlocker.py"
+nix-shell --run "hyperosunlocker"
 
 # Or provide token directly
-nix-shell --run "python hyperosunlocker.py --token 'your_new_bbs_serviceToken'"
+nix-shell --run "hyperosunlocker --token 'your_new_bbs_serviceToken'"
 ```
+
+When the Nix shell is active, run `hyperosunlocker` (or `hyperosunlocker --token ...`) from any directory.
 
 ### Option 2: One-liner from anywhere (pure ephemeral nix-shell)
 

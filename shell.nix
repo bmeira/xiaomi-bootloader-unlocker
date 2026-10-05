@@ -13,14 +13,19 @@ pkgs.mkShell {
   ];
 
   shellHook = ''
+    export HYPEROS_UNLOCKER_SCRIPT="${toString ./.}/hyperosunlocker.py"
+    hyperosunlocker() {
+      python "$HYPEROS_UNLOCKER_SCRIPT" "$@"
+    }
+
     echo "=========================================================="
     echo " Xiaomi Bootloader Unlocker (HyperOS) - Ephemeral Nix Env "
     echo "=========================================================="
     echo "To run interactively:"
-    echo "  python hyperosunlocker.py"
+    echo "  hyperosunlocker"
     echo ""
     echo "To run with token directly:"
-    echo "  python hyperosunlocker.py --token <new_bbs_serviceToken>"
+    echo "  hyperosunlocker --token <new_bbs_serviceToken>"
     echo "=========================================================="
   '';
 }
