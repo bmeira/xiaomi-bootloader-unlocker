@@ -1,0 +1,163 @@
+Checking initial account status...
+[account]: Ready! Account eligible to apply.
+
+[NTP] Synchronizing high-precision time...
+[ntp server]: time.cloudflare.com
+[bj time]:    2026-10-05 23:29:44.288277 (UTC+8)
+[local time]: 2026-10-05 16:29:44.288277 (WEST)
+
+Bootloader unlock quota target scheduled:
+[initial phase offset]: 2000.00 ms before reset (replaced after latency measurement)
+[initial target Beijing]: 2026-10-05 23:59:58.000000 (UTC+8)
+[initial target local]:   2026-10-05 16:59:58.000000 (WEST)
+Keep this terminal open. Countdown in progress...
+
+[countdown]: 30m 13s remaining (current BJ time: 23:29:44)
+[countdown]: 29m 43s remaining (current BJ time: 23:30:14)
+[countdown]: 29m 13s remaining (current BJ time: 23:30:44)
+[countdown]: 28m 43s remaining (current BJ time: 23:31:14)
+[countdown]: 28m 13s remaining (current BJ time: 23:31:44)
+[countdown]: 27m 43s remaining (current BJ time: 23:32:14)
+[countdown]: 27m 13s remaining (current BJ time: 23:32:44)
+[countdown]: 26m 43s remaining (current BJ time: 23:33:14)
+[countdown]: 26m 13s remaining (current BJ time: 23:33:44)
+[countdown]: 25m 43s remaining (current BJ time: 23:34:14)
+[countdown]: 25m 13s remaining (current BJ time: 23:34:44)
+[countdown]: 24m 43s remaining (current BJ time: 23:35:14)
+[countdown]: 24m 13s remaining (current BJ time: 23:35:44)
+[countdown]: 23m 43s remaining (current BJ time: 23:36:14)
+[countdown]: 23m 13s remaining (current BJ time: 23:36:44)
+[countdown]: 22m 43s remaining (current BJ time: 23:37:14)
+[countdown]: 22m 13s remaining (current BJ time: 23:37:44)
+[countdown]: 21m 43s remaining (current BJ time: 23:38:14)
+[countdown]: 21m 13s remaining (current BJ time: 23:38:44)
+[countdown]: 20m 43s remaining (current BJ time: 23:39:14)
+[countdown]: 20m 13s remaining (current BJ time: 23:39:44)
+[countdown]: 19m 43s remaining (current BJ time: 23:40:14)
+[countdown]: 19m 13s remaining (current BJ time: 23:40:44)
+[countdown]: 18m 43s remaining (current BJ time: 23:41:14)
+[countdown]: 18m 13s remaining (current BJ time: 23:41:44)
+[countdown]: 17m 43s remaining (current BJ time: 23:42:14)
+[countdown]: 17m 13s remaining (current BJ time: 23:42:44)
+[countdown]: 16m 43s remaining (current BJ time: 23:43:14)
+[countdown]: 16m 13s remaining (current BJ time: 23:43:44)
+[countdown]: 15m 43s remaining (current BJ time: 23:44:14)
+[countdown]: 15m 13s remaining (current BJ time: 23:44:44)
+[countdown]: 14m 43s remaining (current BJ time: 23:45:14)
+[countdown]: 14m 13s remaining (current BJ time: 23:45:44)
+[countdown]: 13m 43s remaining (current BJ time: 23:46:14)
+[countdown]: 13m 13s remaining (current BJ time: 23:46:44)
+[countdown]: 12m 43s remaining (current BJ time: 23:47:14)
+[countdown]: 12m 13s remaining (current BJ time: 23:47:44)
+[countdown]: 11m 43s remaining (current BJ time: 23:48:14)
+[countdown]: 11m 13s remaining (current BJ time: 23:48:44)
+[countdown]: 10m 43s remaining (current BJ time: 23:49:14)
+[countdown]: 10m 13s remaining (current BJ time: 23:49:44)
+[countdown]: 09m 43s remaining (current BJ time: 23:50:14)
+[countdown]: 09m 13s remaining (current BJ time: 23:50:44)
+[countdown]: 08m 43s remaining (current BJ time: 23:51:14)
+[countdown]: 08m 13s remaining (current BJ time: 23:51:44)
+[countdown]: 07m 43s remaining (current BJ time: 23:52:14)
+[countdown]: 07m 13s remaining (current BJ time: 23:52:44)
+[countdown]: 06m 43s remaining (current BJ time: 23:53:14)
+[countdown]: 06m 13s remaining (current BJ time: 23:53:44)
+[countdown]: 05m 43s remaining (current BJ time: 23:54:14)
+[countdown]: 05m 13s remaining (current BJ time: 23:54:44)
+[countdown]: 04m 43s remaining (current BJ time: 23:55:14)
+[countdown]: 04m 13s remaining (current BJ time: 23:55:44)
+[countdown]: 03m 43s remaining (current BJ time: 23:56:14)
+[countdown]: 03m 13s remaining (current BJ time: 23:56:44)
+[countdown]: 02m 43s remaining (current BJ time: 23:57:14)
+[countdown]: 02m 13s remaining (current BJ time: 23:57:44)
+[countdown]: 01m 43s remaining (current BJ time: 23:58:14)
+[countdown]: 01m 13s remaining (current BJ time: 23:58:44)
+[warmup]: Measuring network latency to Xiaomi API...
+[warmup]: Roundtrip latency: 769.3ms (one-way flight ~384.7ms)
+[warmup]: First request scheduled 2000ms → 1384.7ms before midnight (one-way 384.7ms + centered 2000ms arrival window)
+[warmup]: Burst gap adapted: 69.0ms (30 estimated arrivals centered on midnight)
+[warmup]: New target: 2026-10-05 23:59:58.615350 (UTC+8) / 16:59:58.615350 (WEST)
+[countdown]: 59.6s remaining...
+[countdown]: 54.5s remaining...
+[countdown]: 49.5s remaining...
+[countdown]: 44.5s remaining...
+[countdown]: 39.5s remaining...
+[countdown]: 34.5s remaining...
+[countdown]: 29.5s remaining...
+[countdown]: 24.5s remaining...
+[countdown]: 19.5s remaining...
+[countdown]: 14.5s remaining...
+[countdown]: 9.53s...
+[countdown]: 8.98s...
+[countdown]: 7.98s...
+[countdown]: 6.98s...
+[warmup]: Priming connection pool sockets (T - 5s)...
+[countdown]: 5.98s...
+[countdown]: 4.98s...
+[countdown]: 3.98s...
+[countdown]: 2.98s...
+
+[TRIGGER HIT]: 2026-10-05 23:59:58.615475 (Beijing) -> Dispatching burst!
+Firing 30 scheduled requests (stagger: 69.0ms, workers: 30)...
+
+[request #01]: sent 23:59:58.615 | est. arrival 23:59:59.000 (UTC+8)
+[request #02]: sent 23:59:58.684 | est. arrival 23:59:59.069 (UTC+8)
+[request #03]: sent 23:59:58.753 | est. arrival 23:59:59.137 (UTC+8)
+[request #04]: sent 23:59:58.822 | est. arrival 23:59:59.206 (UTC+8)
+[request #05]: sent 23:59:58.891 | est. arrival 23:59:59.275 (UTC+8)
+[request #06]: sent 23:59:58.960 | est. arrival 23:59:59.344 (UTC+8)
+[request #07]: sent 23:59:59.029 | est. arrival 23:59:59.413 (UTC+8)
+[request #08]: sent 23:59:59.098 | est. arrival 23:59:59.482 (UTC+8)
+[request #09]: sent 23:59:59.167 | est. arrival 23:59:59.551 (UTC+8)
+[request #10]: sent 23:59:59.236 | est. arrival 23:59:59.620 (UTC+8)
+[request #11]: sent 23:59:59.305 | est. arrival 23:59:59.689 (UTC+8)
+[request #12]: sent 23:59:59.374 | est. arrival 23:59:59.758 (UTC+8)
+[response #01]: Quota reached (recvd: 23:59:59.379). Try at 10/06 00:00
+[request #13]: sent 23:59:59.442 | est. arrival 23:59:59.827 (UTC+8)
+[response #02]: Quota reached (recvd: 23:59:59.476). Try at 10/06 00:00
+[request #14]: sent 23:59:59.511 | est. arrival 23:59:59.896 (UTC+8)
+[response #03]: Quota reached (recvd: 23:59:59.527). Try at 10/06 00:00
+[request #15]: sent 23:59:59.580 | est. arrival 23:59:59.965 (UTC+8)
+[request #16]: sent 23:59:59.649 | est. arrival 00:00:00.034 (UTC+8)
+[response #04]: Quota reached (recvd: 23:59:59.664). Try at 10/06 00:00
+[request #17]: sent 23:59:59.718 | est. arrival 00:00:00.103 (UTC+8)
+[response #05]: Quota reached (recvd: 23:59:59.733). Try at 10/06 00:00
+[response #06]: Quota reached (recvd: 23:59:59.743). Try at 10/06 00:00
+[request #18]: sent 23:59:59.787 | est. arrival 00:00:00.172 (UTC+8)
+[response #07]: Quota reached (recvd: 23:59:59.817). Try at 10/06 00:00
+[request #19]: sent 23:59:59.856 | est. arrival 00:00:00.241 (UTC+8)
+[response #08]: Quota reached (recvd: 23:59:59.910). Try at 10/06 00:00
+[request #20]: sent 23:59:59.925 | est. arrival 00:00:00.310 (UTC+8)
+[request #21]: sent 23:59:59.994 | est. arrival 00:00:00.379 (UTC+8)
+[response #09]: Quota reached (recvd: 23:59:59.996). Try at 10/06 00:00
+[request #22]: sent 00:00:00.063 | est. arrival 00:00:00.448 (UTC+8)
+[response #10]: Quota reached (recvd: 00:00:00.075). Try at 10/06 00:00
+[request #23]: sent 00:00:00.132 | est. arrival 00:00:00.517 (UTC+8)
+[request #24]: sent 00:00:00.201 | est. arrival 00:00:00.586 (UTC+8)
+[request #25]: sent 00:00:00.270 | est. arrival 00:00:00.655 (UTC+8)
+[request #26]: sent 00:00:00.339 | est. arrival 00:00:00.724 (UTC+8)
+[request #27]: sent 00:00:00.408 | est. arrival 00:00:00.793 (UTC+8)
+[request #28]: sent 00:00:00.477 | est. arrival 00:00:00.862 (UTC+8)
+[request #29]: sent 00:00:00.546 | est. arrival 00:00:00.931 (UTC+8)
+[request #30]: sent 00:00:00.615 | est. arrival 00:00:01.000 (UTC+8)
+[response #11]: network timeout or empty response (00:00:01.873)
+[response #14]: network timeout or empty response (00:00:02.082)
+[response #16]: network timeout or empty response (00:00:02.220)
+[response #18]: network timeout or empty response (00:00:02.358)
+[response #21]: network timeout or empty response (00:00:02.563)
+[response #27]: network timeout or empty response (00:00:02.974)
+[response #19]: Quota reached (recvd: 00:00:03.133). Try at 10/07 00:00
+[response #12]: Quota reached (recvd: 00:00:03.466). Try at 10/07 00:00
+[response #20]: Quota reached (recvd: 00:00:03.774). Try at 10/07 00:00
+[response #13]: Quota reached (recvd: 00:00:03.775). Try at 10/07 00:00
+[response #24]: Quota reached (recvd: 00:00:03.775). Try at 10/07 00:00
+[response #28]: Quota reached (recvd: 00:00:04.286). Try at 10/07 00:00
+[response #29]: Quota reached (recvd: 00:00:04.296). Try at 10/07 00:00
+[response #17]: Quota reached (recvd: 00:00:04.490). Try at 10/07 00:00
+[response #26]: Quota reached (recvd: 00:00:04.900). Try at 10/07 00:00
+[response #22]: Quota reached (recvd: 00:00:04.901). Try at 10/07 00:00
+[response #30]: Quota reached (recvd: 00:00:05.000). Try at 10/07 00:00
+[response #23]: Quota reached (recvd: 00:00:05.097). Try at 10/07 00:00
+[response #25]: Quota reached (recvd: 00:00:05.204). Try at 10/07 00:00
+[response #15]: Quota reached (recvd: 00:00:05.265). Try at 10/07 00:00
+
+Burst completed.
